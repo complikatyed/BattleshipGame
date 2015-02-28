@@ -27,7 +27,7 @@ function updateBoardDisplay(coords, board) {
 	if(shipNumber <= 3){
 	  console.log();
       board[coords.row][coords.col] = ship;
-      fb.child('/Board').set(board);
+      fb.child('/Game').child('/board').update(board);
 	}
 	//$('table').replaceWith(createBoard(board));
 }
