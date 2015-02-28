@@ -1,7 +1,9 @@
 table {
   border: 1px solid black;
   min-width: 20px;
-  min-height: 20px; }
+  min-height: 20px;
+  display: inline-block;
+  margin-left: 40px; }
   table tr, table td {
     border: 2px solid #04B431;
     width: 110px;

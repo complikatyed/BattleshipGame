@@ -2,6 +2,9 @@
 
 var fb = new Firebase('https://battleship16.firebaseio.com/');
 var board = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
+var board2 = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
+var ship = '<img src="http://www.clipartlord.com/wp-content/uploads/2013/03/submarine.png" height="100px" width="100px">';
+
 
 $('button').on('click', function(){
   createBoard(board);
@@ -20,11 +23,26 @@ function createBoard (tableData) {
   findCoords();
 }
 
+function updateBoardDisplay(coords, board) {
+  board[coords.row][coords.col] = ship;
+	//$('table').replaceWith(createBoard(board));
+}
+
 function findCoords(){
-  $('td').one('click', function(){
-  	var index = $('td').index(this).toString();
-  	$(this).data(index, 'submarine');
-    console.log($('td').index(this));
-    fb.child('/Moves').push($(this).data());
+  $('td').one('click', function(e){
+  	var coords = findIndex(e.target)
+    //fb.child('/Board').push(board);
+    attatchShip($(this));
+    updateBoardDisplay(coords, board);
   });
+}
+
+function findIndex(element) {
+  var row = $(element).closest('tr').index(),
+      col = $(element).index();
+  return { row: row, col: col }
+}
+
+function attatchShip(td) {
+  td.append(ship);
 }
