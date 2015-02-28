@@ -2,9 +2,9 @@
 
 var fb = new Firebase('https://battleship16.firebaseio.com/');
 var board = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
-var board2 = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
+//var board2 = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
 var ship = '<img src="http://www.clipartlord.com/wp-content/uploads/2013/03/submarine.png" height="100px" width="100px">';
-
+var shipNumber = 0;
 
 $('button').on('click', function(){
   createBoard(board);
@@ -24,7 +24,10 @@ function createBoard (tableData) {
 }
 
 function updateBoardDisplay(coords, board) {
-  board[coords.row][coords.col] = ship;
+	if(shipNumber <= 3){
+	  console.log();
+      board[coords.row][coords.col] = ship;
+	}
 	//$('table').replaceWith(createBoard(board));
 }
 
@@ -32,7 +35,8 @@ function findCoords(){
   $('td').one('click', function(e){
   	var coords = findIndex(e.target)
     //fb.child('/Board').push(board);
-    attatchShip($(this));
+    shipNumber += 1;
+    if (shipNumber <= 3) {attatchShip($(this));}   
     updateBoardDisplay(coords, board);
   });
 }
