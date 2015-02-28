@@ -27,6 +27,7 @@ function updateBoardDisplay(coords, board) {
 	if(shipNumber <= 3){
 	  console.log();
       board[coords.row][coords.col] = ship;
+      fb.child('/Board').set(board);
 	}
 	//$('table').replaceWith(createBoard(board));
 }
@@ -34,7 +35,6 @@ function updateBoardDisplay(coords, board) {
 function findCoords(){
   $('td').one('click', function(e){
   	var coords = findIndex(e.target)
-    //fb.child('/Board').push(board);
     shipNumber += 1;
     if (shipNumber <= 3) {attatchShip($(this));}   
     updateBoardDisplay(coords, board);
