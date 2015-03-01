@@ -46,14 +46,14 @@ function updateBoardArray(coords, board) {
 function findCoords(){
 	// on click of a square
   $('td').one('click', function(e){
-  	
+
   	//finds the square's coordinates so a ship can go there
   	var coords = findIndex(e.target);
   	console.log(coords);
-  	
+
   	//iterates (and should limit) the number of ships added to boad
     limitShips(coords);
-    
+
     // updates the board array data in firebase
     updateBoardArray(coords, boardfb);
 
@@ -74,8 +74,7 @@ function limitShips() {
 
 
 // Takes data from the current firebase board
-//and makes placed ships visible on player1's board
-
+// and makes placed ships visible on player1's board 
 // !! see notes above about double/triple appending issue !!
 function updatePlayingBoard(board) {
     for(var row=0; row < 5; row++) {
