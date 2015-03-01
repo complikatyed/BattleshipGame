@@ -1,24 +1,39 @@
 'use strict';
 
 var fb = new Firebase('https://xogame.firebaseio.com/');
-var board = [['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b']];
-//var board2 = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
+var emptyBoard = [['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b']];
 var subImg = '<img src="/img/submarine.png">';
 var sub = "sub";
 var shipNumber = 0;
 var coords;
+var uuid;
 
 $('button').on('click', function(){
-  setBoard();
+  createNewGame();
+  //testStuff();
 });
+
+function createNewGame() {
+  var fb2 = new Firebase('https://xogame.firebaseio.com/Games');
+  var newGameRef = fb2.push();
+  var uuid = newGameRef.key();
+ 
+  newGameRef.set({p1Board: emptyBoard, p2Board: emptyBoard, p1Ships: '', p2Ships: '', p1Points: 0, p2Points: 0})
+
+}
+
+
+
 
 
 function setBoard(){
+
   $('td').one('click', function(e){
  	var coords = findIndex(e.target);
     shipNumber+=1;
     if (shipNumber <= 3) {
     updateBoardArray(coords, board);
+    detectShips();
     // Still need an appending function here
     }
   });
@@ -44,13 +59,19 @@ function setBoard(){
 // updates the board array data in firebase
 function updateBoardArray(coords, board) {
     board[coords.row][coords.col] = sub;
-    fb.child('/Game').child('/board').set(board);
+    fb.child('/Games').child('/uuid').set(board);
+}
+
+function detectShips(){
+  var fb2 = new Firebase('https://xogame.firebaseio.com/Game/board');
+  
 }
 
 //finds the square's coordinates so a ship can go there
 function findIndex(element) {
   var row = $(element).closest('tr').index(),
       col = $(element).index();
+  console.log(row, col);
   return { row: row, col: col };
   // need to figure out how to parse this returned data
   // so it works for the Allison-style append I want to do.
