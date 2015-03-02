@@ -9,27 +9,10 @@ var player1 = true;
 var boardObj;
 var thisGameUUID;
 
-//this code is turning the board array into an object. Just got to figure out where to fire this (after the board is made)
-function boardArraytoObj(){
-	boardObj = _.zipObject(['row1', 'row2', 'row3', 'row4', 'row5'], board);
-	boardObj.row1 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row1);
-	boardObj.row2 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row2);
-	boardObj.row3 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row3);
-	boardObj.row4 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row4);
-	boardObj.row5 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row5);
-}
-
-// function createNewGame(){ var fb2 = new Firebase('https://battleshippractice.firebaseio.com/'); 
-// var newGameRef = fb2.push(); 
-// var uuid = newGameRef.key(); 
-// newGameRef.set({p1Board: '', p2Board: '', p1Ships: '', p2Ships: '', p1Points: 0, p2Points: 0}) 
-// return uuid; }
-
 //takes the last firebase object. If there is no player 2, you join as player 2. If there is a player 2, create new game.
 
 $('.start').on('click', function(){
   createBoard(board);
-  //createNewGame();
   fb.child('/Games').limitToLast(1).once('value', function(snapshot) {
 	  var data = snapshot.val();
 	  var key = data && Object.keys(data)[0] || null;
@@ -42,15 +25,18 @@ $('.start').on('click', function(){
 	    thisGameUUID = fb.child('/Games').child(key).key();
 	    player1 = false;
 	  }
+	  $('.start').hide();
  });
 });
+
+//the Play Someone! button pushes respective board to firebase. It needs to append board1 or board2 object as a table next to it
 
 $('.play').on('click',function(){
   boardArraytoObj();
   sendBoardtoFB();
 });
 
-
+//loops through array to create empty table
 function createBoard (tableData) {
   var $table = $('<table></table>');
   tableData.forEach(function (row) {
@@ -64,23 +50,25 @@ function createBoard (tableData) {
   findCoords();
 }
 
+
 function sendBoardtoFB(){
 	if(player1 === true){fb.child('/Games').child(thisGameUUID).child('/board1').set(boardObj);}
 	else{fb.child('/Games').child(thisGameUUID).child('/board2').set(boardObj);}
 }
 
+//updates board array
 function updateBoardDisplay(coords, board){
 	if(shipNumber <= 3){
       board[coords.row][coords.col] = ship;  
     }
-	//$('table').replaceWith(createBoard(board));
 }
 
+//attaches ship to td
 function findCoords(){
   $('td').one('click', function(e){
   	var coords = findIndex(e.target)
     shipNumber += 1;
-    if (shipNumber <= 3) {attatchShip($(this));}   
+    if (shipNumber <= 3) {$(this).append(ship)}   
     updateBoardDisplay(coords, board);
   });
 }
@@ -91,8 +79,17 @@ function findIndex(element) {
   return { row: row, col: col }
 }
 
-function attatchShip(td) {
-  td.append(ship);
+//this code is turning the board array into an object. 
+function boardArraytoObj(){
+	boardObj = _.zipObject(['row1', 'row2', 'row3', 'row4', 'row5'], board);
+	boardObj.row1 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row1);
+	boardObj.row2 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row2);
+	boardObj.row3 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row3);
+	boardObj.row4 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row4);
+	boardObj.row5 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row5);
 }
+
+
+
 
 
