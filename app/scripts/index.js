@@ -35,15 +35,16 @@ $('.start').on('click', function(){
 //the Play Someone! button pushes respective board to firebase. It needs to append board1 or board2 object as a table next to it
 //alerts if you didn't use all your ships
 $('.send').on('click',function(){
-  if(shipNumber >= 3){sendBoardtoFB(); grabSecondBoard();}
+  if(shipNumber >= 3){sendBoardtoFB(); grabSecondBoard(); $('.send').toggleClass('hidden'); $('.play').toggleClass('hidden');}
   else{alert('you still have' + ' ' + (3 - shipNumber) + ' ' + 'ships to use!');}
-  $('.send').toggleClass('hidden');
-  $('.play').toggleClass('hidden');
 });
 
 $('.play').on('click', function(){
-  if(player1 == true){alert('You have no one to play with, try waiting and clicking Play again');}
+  fb.child('/Games').child(thisGameUUID).child('/board2').once('value', function(res){
+      var boardData = res.exists()
+  if(boardData == false){alert('You have no one to play with, try waiting and clicking Play again');}
   else {createBoard(otherBoard); assessMove();}
+  });
 });
 
 function checkWinner(){
@@ -55,7 +56,7 @@ function checkWinner(){
 }
 
 function assessMove(){
-	$('td').on('click', function(e){
+	$('td').one('click', function(e){
 	  if($(this).hasClass('X')){hits += 1; $(this).append(fire);}
 	  if(hits >= 3 && player1 == true){fb.child('/Games').child(thisGameUUID).child('/winner').update({winner: 'player1'});}
 	  else if(hits >= 3 && player1 == false){fb.child('/Games').child(thisGameUUID).child('/winner').update({winner: 'player2'});}
