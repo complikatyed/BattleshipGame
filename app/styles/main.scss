@@ -1,15 +1,31 @@
 table {
+  display: inline-block;
   border: 1px solid black;
   min-width: 20px;
-	min-height: 20px;
-  display: inline-block;
-  margin-left: 40px;
+  min-height: 20px;
   tr, td {
     border: 2px solid #04B431;
-    width: 90px;
-    height: 90px;
+    width: 60px;
+    height: 60px;
     padding: 7px 7px 2px 7px;
     background-color: black;
     overflow: hidden;
   }
+}
+
+.buttondiv {
+  width: 50%;
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 100px;
+}
+
+img {
+  max-height: 60px;
+  max-width: 60px;
+}
+
+.hidden {
+  display: none;
 }
