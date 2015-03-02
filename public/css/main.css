@@ -11,6 +11,9 @@ table {
     background-color: black;
     overflow: hidden; }
 
+.hidden {
+  display: none; }
+
 .buttondiv {
   width: 50%;
   display: block;

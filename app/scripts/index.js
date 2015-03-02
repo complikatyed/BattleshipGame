@@ -4,7 +4,7 @@ var fb = new Firebase('https://xogame.firebaseio.com/');
 var fb5 = new Firebase('https://xogame.firebaseio.com/Games');
 var emptyBoard = [['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b']];
 var emptyBoard2 = ['b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b'];
-
+var player1 = true;
 var subImg = '<img src="/img/submarine.png">';
 var sub = "sub";
 var shipNumber = 0;
@@ -123,26 +123,27 @@ function displayWinMessage() {
 
 var thisGameUUID;
 
-$('.join').on('click', function(){  // on click of 'start' button...
+$('.join').one('click', function(){  // on click of 'start' button...
   var fb = new Firebase('https://xogame.firebaseio.com/Games');
   fb.limitToLast(1).once('value', function(snapshot) {  // look at the last game
     var data = snapshot.val(); // data = all the data for that last object (the last game)
-    var uuid = data && Object.keys(data)[0] || null;  // this looks for the first index of the object (the uuid?)
-    var game = data && data[uuid] || null;  //  Not sure what that's doing...
+    var gameId = data && Object.keys(data)[0] || null;  // this looks for the first index of the object (the uuid?)
+    var game = data && data[gameId] || null;  //  Not sure what that's doing...
     if (!data || game.p1 && game.p2) {   // if there's no data or already two players
-      createNewGame();
+      var newGameId = fb.push({p1: {p1Board: emptyBoard2, p1Ships: '', p1Points: 0,}});
+      gameId = newGameId.key();
+      $('.messagediv').append("Welcome player 1");
+      $('.p1Board').show();
+      $('.set1').show();
     } else {
-        fb.child(uuid).update({p2: {p2Board: emptyBoard2, p2Ships: '', p2Points: 0,}});
-      $('.messagediv').append("Welcome player 2");
-      // hide "join game" button
-      // display player2 board
-      // player1 = false    <-- This is a Andy thing I'm adding.
-      // Display "place ships" button
+        fb.child(gameId).update({p2: {p2Board: emptyBoard2, p2Ships: '', p2Points: 0,}});
+        player1 = false;
+        $('.messagediv').append("Welcome player 2");
+
+        $('.p2Board').show();
+        $('.set2').show();
       }
-      //How to distinguish between uuid from created game or from original?
-      console.log(uuid);
-      // IF A NEW GAME IS CREATED, THE UUID IS NOT CHANGING TO MATCH IT
-      // WHICH IS A PROBLEM.  FIX IT NEXT!
+      $('.join').hide();
   });
 });
 
@@ -153,11 +154,9 @@ function createNewGame() {
   var newGameRef = fb.push({p1: {p1Board: emptyBoard2, p1Ships: '', p1Points: 0,}});
   var uuid = newGameRef.key();
   $('.messagediv').append("Welcome player 1");
-  // hide "join game" button
-  // display player2 board
-  // player1 = true    <-- This is a Andy thing I'm adding.
-  // Display "place ships" button
-  // display player1 board
+  $('.join').hide();
+  $('.p1Board').show();
+  $('.set1').show();
   return uuid;
 }
 
