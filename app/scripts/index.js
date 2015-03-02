@@ -30,10 +30,10 @@ $('.start').on('click', function(){
 });
 
 //the Play Someone! button pushes respective board to firebase. It needs to append board1 or board2 object as a table next to it
-
+//alerts if you didn't use all your ships
 $('.play').on('click',function(){
-  boardArraytoObj();
-  sendBoardtoFB();
+  if(shipNumber >= 3){boardArraytoObj(); sendBoardtoFB();}
+  else{alert('you still have' + ' ' + (3 - shipNumber) + ' ' + 'ships to use!');}
 });
 
 //loops through array to create empty table
