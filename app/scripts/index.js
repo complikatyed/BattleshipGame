@@ -3,7 +3,8 @@
 var fb = new Firebase('https://battleshippractice.firebaseio.com/');
 var board = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
 var otherBoard;
-var ship = 'X';
+var ship = '<img src=../imgs/submarine.png height="100px" width="100px">';
+var fire = '<img src=../imgs/fire.png height="100px" width="100px">';
 var shipNumber = 0;
 var player1 = true;
 var thisGameUUID;
@@ -53,7 +54,7 @@ function checkWinner(){
 
 function assessMove(){
 	$('td').on('click', function(e){
-	  if($(this).hasClass('X')){hits += 1;}
+	  if($(this).hasClass('X')){hits += 1; $(this).append(fire);}
 	  if(hits >= 3 && player1 == true){fb.child('/Games').child(thisGameUUID).child('/winner').update({winner: 'player1'});}
 	  else if(hits >= 3 && player1 == false){fb.child('/Games').child(thisGameUUID).child('/winner').update({winner: 'player2'});}
 	});
@@ -83,7 +84,7 @@ function sendBoardtoFB(){
 //updates board array
 function updateBoardArray(coords, board){
 	if(shipNumber <= 3){
-      board[coords.row][coords.col] = ship;  
+      board[coords.row][coords.col] = 'X';  
     }
 }
 
