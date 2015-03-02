@@ -9,6 +9,7 @@ var shipNumber = 0;
 var player1 = true;
 var thisGameUUID;
 var hits = 0;
+var shots = 5;
 
 
 //takes the last firebase object. If there is no player 2, you join as player 2. If there is a player 2, create new game.
@@ -41,7 +42,7 @@ $('.send').on('click',function(){
 
 $('.play').on('click', function(){
   fb.child('/Games').child(thisGameUUID).child('/board2').once('value', function(res){
-      var boardData = res.exists()
+      var boardData = res.exists();
   if(boardData == false){alert('You have no one to play with, try waiting and clicking Play again');}
   else {createBoard(otherBoard); assessMove();}
   });
@@ -57,7 +58,9 @@ function checkWinner(){
 
 function assessMove(){
 	$('td').one('click', function(e){
-	  if($(this).hasClass('X')){hits += 1; $(this).append(fire);}
+	  shots -= 1;
+	  if($(this).hasClass('X') && shots >= 5){hits += 1; $(this).append(fire);}
+	  else if(shots <= 0){alert('you ran out of ammo -- gameover');}
 	  if(hits >= 3 && player1 == true){fb.child('/Games').child(thisGameUUID).child('/winner').update({winner: 'player1'});}
 	  else if(hits >= 3 && player1 == false){fb.child('/Games').child(thisGameUUID).child('/winner').update({winner: 'player2'});}
 	});
