@@ -58,7 +58,7 @@ function sendBoardtoFB(){
 }
 
 //updates board array
-function updateBoardDisplay(coords, board){
+function updateBoardArray(coords, board){
 	if(shipNumber <= 3){
       board[coords.row][coords.col] = ship;  
     }
@@ -70,7 +70,7 @@ function findCoords(){
   	var coords = findIndex(e.target)
     shipNumber += 1;
     if (shipNumber <= 3) {$(this).append(ship)}   
-    updateBoardDisplay(coords, board);
+    updateBoardArray(coords, board);
   });
 }
 
@@ -93,7 +93,13 @@ function grabSecondBoard(){
   }
 }
 
-function storeOpponentsLocation(){
+//a way to select second table on page is $('table').eq(1)
+//var rows = $('table').eq(1).find('tr'); ==finds all the rows in second table
+//var cells = $('table').eq(1).find('td'); = finds all the td's in second table
+function appendOpponentsLocation(){
+	rows.forEach(function(){
+
+	})
   
 }
 
