@@ -1,15 +1,15 @@
 'use strict';
 
-var fb = new Firebase('https://xogame.firebaseio.com/');
+var fb = new Firebase('https://xogame.firebaseio.com/Games');
 var fb5 = new Firebase('https://xogame.firebaseio.com/Games');
 var emptyBoard = [['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b']];
 var emptyBoard2 = ['b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b'];
 var player1 = true;
 var subImg = '<img src="/img/submarine.png">';
 var sub = "sub";
+var ship = "sub";
 var shipNumber = 0;
-var uuid;
-var p1Board;
+var gameId;
 
 
 // This SORT OF works...
@@ -119,9 +119,57 @@ function displayWinMessage() {
 }
 
 
-/////////
+//////////////////////////  WORK AREA    //////////////////////////
 
-var thisGameUUID;
+function prepP2Board(gameId) {
+  $('.set2').one('click', function() {
+    setShips2(gameId);
+    //findShips(gameId);
+  });
+}
+
+function prepP1Board(gameId) {
+  $('.set1').one('click', function() {
+    setShips1(gameId);
+    //findShips(gameId);
+  });
+}
+
+function setShips2(gameId) {
+  $('td').one('click', function(e){
+    var index = $(e.target).attr('id');
+    updateP2Array(gameId, index, ship);
+    // Want to change this so the ship can be changed by user.
+  });
+}
+
+function setShips1(gameId) {
+  $('td').one('click', function(e){
+    var index = $(e.target).attr('id');
+    updateP1Array(gameId, index, ship);
+    // Want to change this so the ship can be changed by user.
+  });
+}
+
+
+function updateP1Array(gameId, index, ship) {
+  fb.child(gameId).child('p1').child('p1Board').child(index).set(ship);
+}
+
+function updateP2Array(gameId, index, ship) {
+  fb.child(gameId).child('p2').child('p2Board').child(index).set(ship);
+}
+
+///////////////////////////////////////////////////////////////////////
+//                                                                   //
+//  NOTE TO MYSELF:                                                  //
+//                                                                   //
+//  The functions between here & the goals section are all working.  //
+//  If you need to goof with them, MAKE A COPY so you'll have bkup.  //
+//                                                                   //
+//  Seriously, try not to mess up this stuff!                        //                                       //
+//                                                                   //
+///////////////////////////////////////////////////////////////////////
 
 $('.join').one('click', function(){  // on click of 'start' button...
   var fb = new Firebase('https://xogame.firebaseio.com/Games');
@@ -135,20 +183,79 @@ $('.join').one('click', function(){  // on click of 'start' button...
       $('.messagediv').append("Welcome player 1");
       $('.p1Board').show();
       $('.set1').show();
+      prepP1Board(gameId);
     } else {
         fb.child(gameId).update({p2: {p2Board: emptyBoard2, p2Ships: '', p2Points: 0,}});
         player1 = false;
         $('.messagediv').append("Welcome player 2");
-
         $('.p2Board').show();
         $('.set2').show();
+        prepP2Board(gameId);
       }
       $('.join').hide();
+      //return gameId;
+
+      //prepP2Board(gameId, player, board);
   });
 });
 
-// Creates new game with empty boards & ship/points counters for each players
-// and returns the uuid for the new game object (yay!)
+// // ** This is a temporary setup to see if I could pass the uuid from "createNewGame"
+// // ** to the two subsequent functions.  It has worked, but will need to be changed
+// // ** so we can use ships that are bigger than one square.
+// function prepPlayBoard (uuid) {
+//   $('.set').on('click', function(){
+//     setShips(uuid);
+//     //findShips(uuid);
+//   });
+// }
+
+// // Sets up the board with a ship as user clicks on board squares
+// // NOTE: additional work is needed before larger ships can be placed.
+// function setShips(uuid) {
+//   $('td').one('click', function(e){
+//   var index = $(e.target).attr('id');
+//   updateP1Board(gameId, index, sub);   // Want to change this so the ship can be changed by user.
+//   });
+// }
+
+// // updates player1's board-array in firebase
+// function updateBoardArray(gameId, index, ship) {
+//   fb.child(gameId).child('p1').child('p1Board').child(index).set(ship);
+//   console.log(index);
+// }
+
+/////////////////////////////////////////////////////
+//                                                 //
+//  THE CODE BELOW HAS BEEN DEPRECATED BY REWORKS  //
+//                                                 //
+/////////////////////////////////////////////////////
+
+// // Replaced by 'setShips'
+// function setBoard(){
+//   $('td').one('click', function(e){
+//   var coords = findIndex(e.target);
+//     shipNumber+=1;
+//     if (shipNumber <= 3) {
+//     updateBoardArray(coords, board);
+//     }
+//   });
+// }
+
+// // Replaced by 'updateP1Board'
+// function updateBoardArray(coords, board) {
+//     board[coords.row][coords.col] = sub;
+//     fb.child('/Games').child('/uuid').set(board);
+// }
+
+// // Replaced by 'setShipIndex'
+// function findIndex(element) {
+//   var row = $(element).closest('tr').index(),
+//       col = $(element).index();
+//   console.log(row, col);
+//   return { row: row, col: col };
+// }
+
+// These elements were added to the 'joinGame' function instead
 function createNewGame() {
   var fb = new Firebase('https://xogame.firebaseio.com/Games');
   var newGameRef = fb.push({p1: {p1Board: emptyBoard2, p1Ships: '', p1Points: 0,}});
@@ -160,181 +267,6 @@ function createNewGame() {
   return uuid;
 }
 
-//function prepPlayBoard (uuid) {
-  $('.set').on('click', function(){
-    uuid = '-JjQZG4uashcaAqNrKmR';
-    setShips(uuid);
-    findShips(uuid);
-  });
-//}
-
-function setShips(uuid) {
-  $('td').one('click', function(e){
-  var index = $(e.target).attr('id');
-  updateP1Board(uuid, index, sub);   // Want to change this so the ship can be changed by user.
-  });
-}
-
-function updateP1Board(uuid,index, ship) {
-  fb5.child(uuid).child('p1').child('p1Board').child(index).set(ship);
-  console.log(index);
-}
-
-
-
-/////////////////  Copies of functions to mess with as needed  //////////////////////////
-
-// // THIS IS A COPY -- IT CAN BE MESSED WITH
-// $('.create').on('click', function(){
-//   var uuid = createNewGame();
-//   prepPlayBoard(uuid); // add a game array that uuids would push into?
-// });
-
-
-// // THIS IS A COPY -- IT CAN BE MESSED WITH
-// function setShips(uuid) {
-//   $('td').one('click', function(e){
-//   var index = $(e.target).attr('id');
-//   updateP1Board(uuid, index, sub);   // Want to change this so the ship can be changed by user.
-//   });
-// }
-
-// // THIS IS A COPY -- IT CAN BE MESSED WITH
-// function prepPlayBoard (uuid) {
-//   $('.set').on('click', function(){
-//     setShips(uuid);
-//     findShips(uuid);
-//   });
-// }
-
-
-///////////////////////////////////////////////////////////////////////
-//                                                                   //
-//  NOTE TO MYSELF:                                                  //
-//                                                                   //
-//  The functions between here & the goals section are all working.  //
-//  If you need to goof with them, MAKE A COPY so you'll have bkup.  //
-//                                                                   //
-//  Seriously, try not to mess up this stuff!                        //                                       //
-//                                                                   //
-///////////////////////////////////////////////////////////////////////
-
-
-// On click of the 'create a new game' button, this gets everything started.
-// It really needs to be more like "Join Game", but we're not there yet
-// $('.create').on('click', function(){
-//   var uuid = createNewGame();
-//   prepPlayBoard(uuid); // add a game array that uuids would push into?
-// });
-
-/*// ** This is a temporary setup to see if I could pass the uuid from "createNewGame"
-// ** to the two subsequent functions.  It has worked, but will need to be changed
-// ** so we can use ships that are bigger than one square.
-function prepPlayBoard (uuid) {
-  $('.set').on('click', function(){
-    setShips(uuid);
-    //findShips(uuid);
-  });
-}
-
-// Creates new game with empty boards & ship/points counters for each players
-// and returns the uuid for the new game object (yay!)
-function createNewGame() {
-  var fb = new Firebase('https://xogame.firebaseio.com/Games');
-  var newGameRef = fb.push({p1: {p1Board: emptyBoard2, p1Ships: '', p1Points: 0,}});
-  var uuid = newGameRef.key();
-  $('.messagediv').append("Welcome player 1");
-  // hide "join game" button
-  // display player2 board
-  // player1 = true    <-- This is a Andy thing I'm adding.
-  // Display "place ships" button
-  // display player1 board
-  return uuid;
-}
-
-
-// Sets up the board with a ship as user clicks on board squares
-// NOTE: additional work is needed before larger ships can be placed.
-function setShips(uuid) {
-  $('td').one('click', function(e){
-  var index = $(e.target).attr('id');
-  updateP1Board('-JjQRF36ZWXBRfyZiLgp', index, sub);   // Want to change this so the ship can be changed by user.
-  });
-}
-
-// updates player1's board-array in firebase
-function updateP1Board(uuid, index, ship) {
-  fb.child('-JjQRF36ZWXBRfyZiLgp').child('p1').child('p1Board').child(index).set(ship);
-  console.log(index);
-}
-*/
-
-/////////////////////////////////////////////////////
-//                                                 //
-//  GOAL 2: allow user to choose ships             //
-//                                                 //
-//  This is going to require additional buttons    //
-//  and probably a multi-step process for the      //
-//  larger (multi-cell) ships.                     //
-//                                                 //
-//  Needs to feed the ship data into 'setShips'    //
-//  so the correct ship data is added to array     //
-//                                                 //
-/////////////////////////////////////////////////////
-
-//////////////////////////////////////////////////////////
-//                                                      //
-//  GOALS 3+                                            //
-//                                                      //
-//  3. Display opponent's board (w/o ships) to players  //
-//                                                      //
-//  4. Switch turns between players                     //
-//                                                      //
-//  5. Track hits & misses (similar to setShips)        //
-//                                                      //
-//  6. Ch. color/texture of cell based on hit/miss      //
-//                                                      //
-//  7. Track points based on hits (store in FB)         //
-//                                                      //
-//  8. Track remaining ships (based on hits)            //
-//                                                      //
-//  9. Add bonus points for sinking whole ship?         //
-//                                                      //
-//  10. Determine game over & winner (by points)        //
-//                                                      //
-//////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////
-//                                                 //
-//  THE CODE BELOW HAS BEEN DEPRECATED BY REWORKS  //
-//                                                 //
-/////////////////////////////////////////////////////
-
-// Replaced by 'setShips'
-function setBoard(){
-  $('td').one('click', function(e){
-  var coords = findIndex(e.target);
-    shipNumber+=1;
-    if (shipNumber <= 3) {
-    updateBoardArray(coords, board);
-    }
-  });
-}
-
-// Replaced by 'updateP1Board'
-function updateBoardArray(coords, board) {
-    board[coords.row][coords.col] = sub;
-    fb.child('/Games').child('/uuid').set(board);
-}
-
-// Replaced by 'setShipIndex'
-function findIndex(element) {
-  var row = $(element).closest('tr').index(),
-      col = $(element).index();
-  console.log(row, col);
-  return { row: row, col: col };
-}
 
 
 ////////////////////////  Margaret's code ////////////////////////////////////
