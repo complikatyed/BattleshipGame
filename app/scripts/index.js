@@ -32,7 +32,7 @@ $('.start').on('click', function(){
 //the Play Someone! button pushes respective board to firebase. It needs to append board1 or board2 object as a table next to it
 //alerts if you didn't use all your ships
 $('.play').on('click',function(){
-  if(shipNumber >= 3){boardArraytoObj(); sendBoardtoFB();}
+  if(shipNumber >= 3){boardArraytoObj(); sendBoardtoFB(); appendSecondBoard();}
   else{alert('you still have' + ' ' + (3 - shipNumber) + ' ' + 'ships to use!');}
 });
 
@@ -79,7 +79,7 @@ function findIndex(element) {
   return { row: row, col: col }
 }
 
-//this code is turning the board array into an object. 
+//this code is turning the board array into an object. maybe we dont want this?
 function boardArraytoObj(){
 	boardObj = _.zipObject(['row1', 'row2', 'row3', 'row4', 'row5'], board);
 	boardObj.row1 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row1);
@@ -87,8 +87,14 @@ function boardArraytoObj(){
 	boardObj.row3 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row3);
 	boardObj.row4 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row4);
 	boardObj.row5 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row5);
+	return boardObj;
 }
 
+function appendSecondBoard(){
+  fb.child('/Games').child(thisGameUUID).child('/board1').once('value', function(res){
+    console.log(res.val().row1);
+  });
+}
 
 
 
