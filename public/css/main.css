@@ -11,3 +11,6 @@ table {
     padding: 7px 7px 2px 7px;
     background-color: grey;
     overflow: hidden; }
+
+.hidden {
+  display: none; }

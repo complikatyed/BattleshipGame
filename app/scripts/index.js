@@ -28,6 +28,7 @@ $('.start').on('click', function(){
 	    player1 = false;
 	  }
 	  $('.start').hide();
+	  $('.send').toggleClass('hidden');
  });
 });
 
@@ -36,7 +37,8 @@ $('.start').on('click', function(){
 $('.send').on('click',function(){
   if(shipNumber >= 3){sendBoardtoFB(); grabSecondBoard();}
   else{alert('you still have' + ' ' + (3 - shipNumber) + ' ' + 'ships to use!');}
-  $('.send').hide();
+  $('.send').toggleClass('hidden');
+  $('.play').toggleClass('hidden');
 });
 
 $('.play').on('click', function(){
