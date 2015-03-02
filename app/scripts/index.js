@@ -1,12 +1,13 @@
 'use strict';
 
 var fb = new Firebase('https://battleshippractice.firebaseio.com/');
+var emptyBoard = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
 var board = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
-//var board2 = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
+var otherBoard;
 var ship = '<img src="http://www.clipartlord.com/wp-content/uploads/2013/03/submarine.png" height="100px" width="100px">';
 var shipNumber = 0;
 var player1 = true;
-var boardObj;
+//var boardObj = _.zipObject(['row1', 'row2', 'row3', 'row4', 'row5'], board);
 var thisGameUUID;
 
 //takes the last firebase object. If there is no player 2, you join as player 2. If there is a player 2, create new game.
@@ -32,7 +33,7 @@ $('.start').on('click', function(){
 //the Play Someone! button pushes respective board to firebase. It needs to append board1 or board2 object as a table next to it
 //alerts if you didn't use all your ships
 $('.play').on('click',function(){
-  if(shipNumber >= 3){boardArraytoObj(); sendBoardtoFB(); appendSecondBoard();}
+  if(shipNumber >= 3){sendBoardtoFB(); grabSecondBoard(); createBoard(emptyBoard);}
   else{alert('you still have' + ' ' + (3 - shipNumber) + ' ' + 'ships to use!');}
 });
 
@@ -52,8 +53,8 @@ function createBoard (tableData) {
 
 
 function sendBoardtoFB(){
-	if(player1 === true){fb.child('/Games').child(thisGameUUID).child('/board1').set(boardObj);}
-	else{fb.child('/Games').child(thisGameUUID).child('/board2').set(boardObj);}
+	if(player1 === true){fb.child('/Games').child(thisGameUUID).child('/board1').set(board);}
+	else{fb.child('/Games').child(thisGameUUID).child('/board2').set(board);}
 }
 
 //updates board array
@@ -79,23 +80,21 @@ function findIndex(element) {
   return { row: row, col: col }
 }
 
-//this code is turning the board array into an object. maybe we dont want this?
-function boardArraytoObj(){
-	boardObj = _.zipObject(['row1', 'row2', 'row3', 'row4', 'row5'], board);
-	boardObj.row1 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row1);
-	boardObj.row2 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row2);
-	boardObj.row3 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row3);
-	boardObj.row4 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row4);
-	boardObj.row5 = _.zipObject(['1', '2', '3', '4', '5'], boardObj.row5);
-	return boardObj;
+//this function grabs otherBoard array
+function grabSecondBoard(){
+  if(player1 == true) {
+  	fb.child('/Games').child(thisGameUUID).child('/board2').once('value', function(res){
+      otherBoard = res.val();
+    });
+  }
+  else{fb.child('/Games').child(thisGameUUID).child('/board1').once('value', function(res){
+    otherBoard = res.val();
+    });
+  }
 }
 
-function appendSecondBoard(){
-  fb.child('/Games').child(thisGameUUID).child('/board1').once('value', function(res){
-    console.log(res.val().row1);
-  });
+function storeOpponentsLocation(){
+  
 }
-
-
 
 
