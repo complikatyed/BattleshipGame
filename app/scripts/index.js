@@ -1,6 +1,6 @@
 'use strict';
 
-var fb = new Firebase('https://battleshippractice.firebaseio.com/');
+var fb = new Firebase('https://battleship16.firebaseio.com/');
 var board = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
 var otherBoard;
 var ship = '<img src=../imgs/submarine.png height="100px" width="100px">';
@@ -29,25 +29,25 @@ $('.start').on('click', function(){
 	    thisGameUUID = fb.child('/Games').child(key).key();
 	    player1 = false;
 	  }
-	  $('.start').hide();
-	  $('.send').toggleClass('hidden');
+	$('.start').hide();
+	$('.send').toggleClass('hidden');
  });
 });
 
-//the Play Someone! button pushes respective board to firebase. It needs to append board1 or board2 object as a table next to it
-//alerts if you didn't use all your ships
-$('.send').on('click',function(){
+//sends board to firebase
+$('.send').one('click',function(){
   $('.message1').hide();
-  if(shipNumber >= 3){sendBoardtoFB(); grabSecondBoard(); $('.send').toggleClass('hidden'); $('.play').toggleClass('hidden');}
+  if(shipNumber >= 3){sendBoardtoFB(); $('.send').toggleClass('hidden'); $('.play').toggleClass('hidden');}
   else{alert('you still have' + ' ' + (3 - shipNumber) + ' ' + 'ships to use!');}
   $('table').eq(0).hide();
 });
 
+//grabs another players board from firebase
 $('.play').on('click', function(){
-  fb.child('/Games').child(thisGameUUID).child('/board2').once('value', function(res){
+  fb.child('/Games').child(thisGameUUID).child('/board2').on('value', function(res){
       var boardData = res.exists();
   if(boardData == false){alert('You have no one to play with, try waiting and clicking Play again');}
-  else {createBoard(otherBoard); assessMove(); $('.message2').append('<h2>You have 5 Missles. Fire them!</h2>'); $('.play').hide();}
+  else {grabSecondBoard(); createBoard(otherBoard); assessMove(); $('.message2').append('<h2>You have 5 Missles. Fire them!</h2>'); $('.play').hide();}
   });
 });
 
@@ -116,11 +116,11 @@ function findIndex(element) {
 //this function grabs otherBoard array
 function grabSecondBoard(){
   if(player1 == true) {
-  	fb.child('/Games').child(thisGameUUID).child('/board2').once('value', function(res){
+  	fb.child('/Games').child(thisGameUUID).child('/board2').on('value', function(res){
       otherBoard = res.val();
     });
   }
-  else{fb.child('/Games').child(thisGameUUID).child('/board1').once('value', function(res){
+  else{fb.child('/Games').child(thisGameUUID).child('/board1').on('value', function(res){
     otherBoard = res.val();
     });
   }
