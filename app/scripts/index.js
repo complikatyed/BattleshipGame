@@ -1,12 +1,13 @@
 'use strict';
 
 var fb = new Firebase('https://battleship16.firebaseio.com/');
-var board = [['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']];
+var board = [['','','','','','','','','',''],['','','','','','','','','',''],['','','','','','','','','',''],['','','','','','','','','',''],['','','','','','','','','',''], ['','','','','','','','','',''], ['','','','','','','','','',''], ['','','','','','','','','',''], ['','','','','','','','','',''], ['','','','','','','','','','']];
 var otherBoard;
-var ship = '<img src=../imgs/submarine.png height="100px" width="100px">';
-var fire = '<img src=../imgs/fire.png height="100px" width="100px">';
+var ship = '<img src=../imgs/submarine.png height="40px" width="40px">';
+var fire = '<img src=../imgs/fire.png height="40px" width="40px">';
 var shipNumber = 0;
 var player1 = true;
+var player2 = false;
 var thisGameUUID;
 var hits = 0;
 var shots = 5;
@@ -16,7 +17,6 @@ var shots = 5;
 
 $('.start').on('click', function(){
   createBoard(board);
-  $('.message1').append($('<h2>You Have 3 Submarines. Place Them Wisely.</h2>'));
   fb.child('/Games').limitToLast(1).once('value', function(snapshot) {
 	  var data = snapshot.val();
 	  var key = data && Object.keys(data)[0] || null;
@@ -28,18 +28,21 @@ $('.start').on('click', function(){
 	    fb.child('/Games').child(key).update({p2: 'player2'});
 	    thisGameUUID = fb.child('/Games').child(key).key();
 	    player1 = false;
+      player2 = true;
 	  }
 	$('.start').hide();
 	$('.send').toggleClass('hidden');
+  if(player1 == true){$('.message1').append('<h2>Welcome Player 1</h2>');}
+  else{$('.message1').append('<h2>Welcome Player 2</h2>');}
  });
+  $('.message2').append($('<h2>You Have 3 Submarines. Place Them Wisely.</h2>'));
 });
 
 //sends board to firebase
 $('.send').one('click',function(){
-  $('.message1').hide();
+  $('.message2').hide();
   if(shipNumber >= 3){sendBoardtoFB(); $('.send').toggleClass('hidden'); $('.play').toggleClass('hidden');}
   else{alert('you still have' + ' ' + (3 - shipNumber) + ' ' + 'ships to use!');}
-  $('table').eq(0).hide();
 });
 
 //grabs another players board from firebase
