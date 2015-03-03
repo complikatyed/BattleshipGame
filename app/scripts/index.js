@@ -1,164 +1,152 @@
 'use strict';
 
 var fb = new Firebase('https://xogame.firebaseio.com/Games');
-var fb5 = new Firebase('https://xogame.firebaseio.com/Games');
 var emptyBoard = [['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b'],['b','b','b','b','b']];
 var emptyBoard2 = ['b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b','b'];
 var player1 = true;
 var subImg = '<img src="/img/submarine.png">';
-var sub = "sub";
+var tempImg = '<img src="/img/temp.jpeg">'
 var ship = "sub";
-var shipNumber = 0;
+var subNumber = 0;
 var gameId;
+      
 
+////////////////  ---   STARTING THE GAME  ---  ///////////////////////
 
-// This SORT OF works...
-// It's returning ALL of the index numbers with their values, which may be useful later
-// Still not sure how to grab JUST the index numbers that have subs attached.
-// It seems like it ought to be .equalTo(); but I can't figure out how to make that work.
-function findShips(uuid) {
-  var ref = new Firebase("https://xogame.firebaseio.com/Games/" + uuid + "/p1/p1Board");
-  ref.orderByValue().on("value", function(snapshot) {
-    snapshot.forEach(function(data) {
-      console.log(data.key() + " is " + data.val());
-    });
+$('.join').one('click', function(){  // on click of 'start' button...
+  var fb = new Firebase('https://xogame.firebaseio.com/Games');
+  fb.limitToLast(1).once('value', function(snapshot) {  // look at the last game
+    var data = snapshot.val(); // data = all the data for that last object (the last game)
+    var gameId = data && Object.keys(data)[0] || null;  // this looks for the first index of the object (the uuid?)
+    var game = data && data[gameId] || null;  //  Not sure what that's doing...
+
+    if (!data || game.p1 && game.p2) {   // if there's no data or already two players
+      var newGameId = fb.push({p1: {p1Board: emptyBoard2, p1Ships: '', p1Points: 0,}});
+      gameId = newGameId.key();
+      $('.messagediv').append("Welcome player 1");
+      $('.boardp1').show();
+      $('.set1').show();
+        // hide player 2 home board caption?
+      readyForShips1(gameId);
+    }
+    else {
+      fb.child(gameId).update({p2: {p2Board: emptyBoard2, p2Ships: '', p2Points: 0,}});
+      player1 = false;
+      $('.messagediv').append("Welcome player 2");
+      $('.boardp2').show();
+      $('.set2').show();
+        // hide player 1 home board caption?
+      readyForShips2(gameId);
+    }
+
+      $('.join').hide();
   });
-}
-
-function displayShips() {
-  // 1. Input argument will be info from "findShips" function
-  // 2. Using classes and/or ids (that match array index), append images or shapes
-  //    A. Possible approach = $(cellClass).append(shipImg);
-  //    B. May want to use simple shapes for ease of placement
-  //       i.  Should the image or shape have text also?
-  //       ii. Different shapes for different ships?
-  // 3. Will need adaptations for multi-square ships
-  //    A. Could reference larger ships with multi-part names?
-  //       i.   Cruiser:  cru1, cru2
-  //       ii.  Destroyer: dest1, dest2, dest3
-  //       iii. Carrier: car1, car2, car3, car4
-  //    B. Can set images hidden for display of board to opponent
-}
+});
 
 
-function takeTurn() {
-  // 1. Click on square on "opponent's" board  (use the same approach as before)
-  // 2. Calls "checkForHit" function (framed)
-  //    A. "MISS"
-  //       i.  calls "markHitOrMiss" function (framed)
-  //       ii. calls "whoseTurn" function (framed -- sortof)
-  //
-  //    B. "HIT"
-  //       i.  calls "markHitOrMiss" function (framed)
-  //       ii. calls "trackShips" function (framed)
-  //       ii. calls "gameStatus" function (framed)
-  //           a. if player has won -- call "displayWin" (framed)
-  //           b. if no one has won yet:
-  //               1. Calls "updateScoreArray" function (framed)
-  //               2. Calls "updateScoreDisplay" functin (framed)
-  //               3. Calls "whoseTurn" function (framed -- sortof)
-  // 3. if game not over, tell next player to go.
-}
-
-function checkForHit() {
-  // Should be much the same as the 'findShips' function
-  // (once I get that mess sorted out)
-  // 1. On click in a board square, looks for a ship (or "h" or "m") in that spot.
-  //    ** If we do what I'm imagining & display the opponent's actual board
-  //    ** (with the ships hidden) this part should be incredibly easy.
-  // 2. Return "hit" or "miss" (or hit === true?) for the next function
-  //
-}
-
-function markHitOrMiss() {
-  // 1. Take input from "checkForHit" function and react to it
-  // 2. Update board arrays with "h" or "m" so they can't be chosen again.
-  // 3. Update displayed boards to indicate hit or miss
-  //    A. How to show hit?
-  //       i. reveal picture (toggle hidden)
-  //       ii. Add colored and/or textured background
-  //       iii. Some kind of animation?
-  //    B. Indicate a miss?
-  //       i. nothing to unhide (since no ship is there)
-  //       ii. use a symbol or color/texture?
-}
-
-function updateScoreArray() {
-  // 1. Take input from "checkForHit" (and "trackShips") function and react to it
-  // 2. Add to the point value in the player's point array in firebase
-  // 3. Return score data for the "updateScoreDisplay" function
-}
-
-function updateScoreDisplay() {
-  // 1. Take input from "updateScoreArray" to display.
-  // 2. Append updated score to the display
-  // (we need to create a div or container for this in our index.jade file)
-}
-
-function trackShips(){
-  // 1. Take hit data and deduct hit from the correct ship
-  // 2. if ship already has a hit, did this hit sink it? (less than < 1)
-  // 3. if it did sink a ship, send bonus points to score array
-}
-
-function whoseTurn() {
-  // Not sure if this needs to be a separate function, or just an iterator
-  // Putting it here as a function to be written until we decide how to proceed.
-}
-
-function gameStatus() {
-  // 1. check for remaining ships (just in one player's set, or both?)
-  // 2. If there are still ships, flip the "whoseTurn" marker (or call the function)
-  // 3. If there are no ships left (for either player), 'game over' = true;
-  // 4. Calls "displayWinMessage"
-}
-
-function displayWinMessage() {
-  // 1. append some kind of winning message to both pages
-  // (not sure what we want the message to be -- same on both screens, etc?)
-}
 
 
-//////////////////////////  WORK AREA    //////////////////////////
 
-function prepP2Board(gameId) {
-  $('.set2').one('click', function() {
-    setShips2(gameId);
-    //findShips(gameId);
-  });
-}
+///////////////// Board 1 Stuff ////////////////////////////
 
-function prepP1Board(gameId) {
+function readyForShips1(gameId) {
   $('.set1').one('click', function() {
-    setShips1(gameId);
-    //findShips(gameId);
+    setShips1(gameId, gatherP1Data);
   });
 }
-
-function setShips2(gameId) {
-  $('td').one('click', function(e){
-    var index = $(e.target).attr('id');
-    updateP2Array(gameId, index, ship);
-    // Want to change this so the ship can be changed by user.
-  });
-}
-
-function setShips1(gameId) {
-  $('td').one('click', function(e){
-    var index = $(e.target).attr('id');
-    updateP1Array(gameId, index, ship);
-    // Want to change this so the ship can be changed by user.
-  });
-}
-
 
 function updateP1Array(gameId, index, ship) {
   fb.child(gameId).child('p1').child('p1Board').child(index).set(ship);
 }
 
+function setShips1(gameId, callback) {       // Want to change this so the ship can be changed by user.
+  $('td').on('click', function(e){
+    var index = $(e.target).attr('id');
+    console.log(subNumber);
+    if (subNumber != 3) {
+     {$(this).append(tempImg)}  // Take this out later?
+      updateP1Array(gameId, index, ship);
+      subNumber += 1;
+    }
+    $('.set1').hide();
+    $('.messagediv').hide();
+    callback(gameId);
+  });
+}
+
+function gatherP1Data(gameId) {
+  var shipIndex = [];
+  var hitIndex = [];
+  var missIndex = [];
+  var ref = new Firebase("https://xogame.firebaseio.com/Games/" + gameId + "/p1/p1Board");
+  ref.orderByValue().on("value", function(snapshot) {
+    snapshot.forEach(function(data) {
+      if (data.val() === "sub") {
+        shipIndex.push(data.key());
+      }
+      else if (data.val() === "m") {
+        missIndex.push(data.key());
+      }
+      else if (data.val() === "h") {
+        hitIndex.push(data.key());
+      }
+      return shipIndex, missIndex, hitIndex;
+    });
+  });
+}
+
+//////////////////// Board 2 Stuff //////////////////////////
+
+function readyForShips2(gameId) {
+  $('.set2').one('click', function() {
+    setShips2(gameId, gatherP2Data);
+  });
+}
+
+function setShips2(gameId, callback) {
+  $('td').on('click', function(e){
+    var index = $(e.target).attr('id');
+    console.log(subNumber);
+    if (subNumber != 3) {
+     {$(this).append(tempImg)}  // Take this out later?
+      updateP2Array(gameId, index, ship);
+      subNumber += 1;
+    }
+    $('.set2').hide();
+    $('.messagediv').hide();
+    callback(gameId);
+  });
+}
+
 function updateP2Array(gameId, index, ship) {
   fb.child(gameId).child('p2').child('p2Board').child(index).set(ship);
 }
+
+function gatherP2Data(gameId) {
+  var shipIndex = [];
+  var hitIndex = [];
+  var missIndex = [];
+  var ref = new Firebase("https://xogame.firebaseio.com/Games/" + gameId + "/p2/p2Board");
+  ref.orderByValue().on("value", function(snapshot) {
+    snapshot.forEach(function(data) {
+      if (data.val() === "sub") {
+        shipIndex.push(data.key());
+      }
+      else if (data.val() === "m") {
+        missIndex.push(data.key());
+      }
+      else if (data.val() === "h") {
+        hitIndex.push(data.key());
+      }
+      return shipIndex, missIndex, hitIndex;
+    });
+  });
+}
+
+
+
+
+
 
 ///////////////////////////////////////////////////////////////////////
 //                                                                   //
@@ -171,33 +159,16 @@ function updateP2Array(gameId, index, ship) {
 //                                                                   //
 ///////////////////////////////////////////////////////////////////////
 
-$('.join').one('click', function(){  // on click of 'start' button...
-  var fb = new Firebase('https://xogame.firebaseio.com/Games');
-  fb.limitToLast(1).once('value', function(snapshot) {  // look at the last game
-    var data = snapshot.val(); // data = all the data for that last object (the last game)
-    var gameId = data && Object.keys(data)[0] || null;  // this looks for the first index of the object (the uuid?)
-    var game = data && data[gameId] || null;  //  Not sure what that's doing...
-    if (!data || game.p1 && game.p2) {   // if there's no data or already two players
-      var newGameId = fb.push({p1: {p1Board: emptyBoard2, p1Ships: '', p1Points: 0,}});
-      gameId = newGameId.key();
-      $('.messagediv').append("Welcome player 1");
-      $('.p1Board').show();
-      $('.set1').show();
-      prepP1Board(gameId);
-    } else {
-        fb.child(gameId).update({p2: {p2Board: emptyBoard2, p2Ships: '', p2Points: 0,}});
-        player1 = false;
-        $('.messagediv').append("Welcome player 2");
-        $('.p2Board').show();
-        $('.set2').show();
-        prepP2Board(gameId);
-      }
-      $('.join').hide();
-      //return gameId;
 
-      //prepP2Board(gameId, player, board);
-  });
-});
+
+// Currently hard-coded as player2 data, not the long-term goal here!
+
+
+
+
+
+
+
 
 // // ** This is a temporary setup to see if I could pass the uuid from "createNewGame"
 // // ** to the two subsequent functions.  It has worked, but will need to be changed

@@ -8,15 +8,17 @@
     <link rel="stylesheet" href="css/main.css">
   </head>
   <body><!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]--></body>
-  <h1>BATTLESHIP APP
+  <div class="headingdiv">
+    <h1>BATTLESHIP GAME</h1>
+    <div class="messagediv"> </div>
     <div class="buttondiv">
       <button class="join">Join a Game</button>
-      <button class="set1 hidden">Place Your Ships</button>
       <button class="set2 hidden">Place Your Ships</button>
+      <button class="set1 hidden">Place Your Ships</button>
     </div>
-    <div class="messagediv"></div>
     <div class="container">
-      <table class="board">
+      <table class="boardp1 hidden">
+        <caption>Player 1 - Home Board</caption>
         <tbody>
           <tr>
             <td id="0" class="cell-0-0"></td>
@@ -54,9 +56,49 @@
             <td id="25" class="cell-4-4"></td>
           </tr>
         </tbody>
+        <table class="boardp2 hidden">
+          <caption>Player 2 - Home Board</caption>
+          <tbody>
+            <tr>
+              <td id="0" class="cell-0-0"></td>
+              <td id="1" class="cell-0-1"></td>
+              <td id="2" class="cell-0-2"></td>
+              <td id="3" class="cell-0-3"></td>
+              <td id="4" class="cell-0-4"></td>
+            </tr>
+            <tr>
+              <td id="6" class="cell-1-0"></td>
+              <td id="7" class="cell-1-1"></td>
+              <td id="8" class="cell-1-2"></td>
+              <td id="9" class="cell-1-3"></td>
+              <td id="10" class="cell-1-4"></td>
+            </tr>
+            <tr>
+              <td id="11" class="cell-2-0"></td>
+              <td id="12" class="cell-2-1"></td>
+              <td id="13" class="cell-2-2"></td>
+              <td id="14" class="cell-2-3"></td>
+              <td id="15" class="cell-2-4"></td>
+            </tr>
+            <tr>
+              <td id="16" class="cell-3-0"></td>
+              <td id="17" class="cell-3-1"></td>
+              <td id="18" class="cell-3-2"></td>
+              <td id="19" class="cell-3-3"></td>
+              <td id="20" class="cell-3-4"></td>
+            </tr>
+            <tr>
+              <td id="21" class="cell-4-0"></td>
+              <td id="22" class="cell-4-1"></td>
+              <td id="23" class="cell-4-2"></td>
+              <td id="24" class="cell-4-3"></td>
+              <td id="25" class="cell-4-4"></td>
+            </tr>
+          </tbody>
+        </table>
       </table>
     </div>
-  </h1>
+  </div>
   <!-- build:js js/vendor.min.js-->
   <!-- bower:js-->
   <script src="../bower_components/jquery/dist/jquery.js"></script>
