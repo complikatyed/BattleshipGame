@@ -14,3 +14,6 @@ table {
 
 .hidden {
   display: none; }
+
+.container {
+  margin-left: 40%; }

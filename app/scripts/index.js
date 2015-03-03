@@ -16,6 +16,7 @@ var shots = 5;
 
 $('.start').on('click', function(){
   createBoard(board);
+  $('.message1').append($('<h2>You Have 3 Submarines. Place Them Wisely.</h2>'));
   fb.child('/Games').limitToLast(1).once('value', function(snapshot) {
 	  var data = snapshot.val();
 	  var key = data && Object.keys(data)[0] || null;
@@ -36,11 +37,14 @@ $('.start').on('click', function(){
 //the Play Someone! button pushes respective board to firebase. It needs to append board1 or board2 object as a table next to it
 //alerts if you didn't use all your ships
 $('.send').on('click',function(){
+  $('.message1').hide();
   if(shipNumber >= 3){sendBoardtoFB(); grabSecondBoard(); $('.send').toggleClass('hidden'); $('.play').toggleClass('hidden');}
   else{alert('you still have' + ' ' + (3 - shipNumber) + ' ' + 'ships to use!');}
+  $('table').eq(0).hide();
 });
 
 $('.play').on('click', function(){
+ $('.message2').append('<h2>You have 5 Missles. Fire them!</h2>')
   fb.child('/Games').child(thisGameUUID).child('/board2').once('value', function(res){
       var boardData = res.exists();
   if(boardData == false){alert('You have no one to play with, try waiting and clicking Play again');}
