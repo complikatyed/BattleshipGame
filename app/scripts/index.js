@@ -44,11 +44,10 @@ $('.send').on('click',function(){
 });
 
 $('.play').on('click', function(){
- $('.message2').append('<h2>You have 5 Missles. Fire them!</h2>')
   fb.child('/Games').child(thisGameUUID).child('/board2').once('value', function(res){
       var boardData = res.exists();
   if(boardData == false){alert('You have no one to play with, try waiting and clicking Play again');}
-  else {createBoard(otherBoard); assessMove();}
+  else {createBoard(otherBoard); assessMove(); $('.message2').append('<h2>You have 5 Missles. Fire them!</h2>'); $('.play').hide();}
   });
 });
 
@@ -62,7 +61,7 @@ function checkWinner(){
 
 function assessMove(){
 	$('td').one('click', function(e){
-	  if($(this).hasClass('X') && shots >= 5){hits += 1; $(this).append(fire);}
+	  if($(this).hasClass('X') && shots <= 5){hits += 1; $(this).append(fire);}
 	  else if(shots <= 0){alert('you ran out of ammo -- gameover');}
 	  if(hits >= 3 && player1 == true){fb.child('/Games').child(thisGameUUID).child('/winner').update({winner: 'player1'});}
 	  else if(hits >= 3 && player1 == false){fb.child('/Games').child(thisGameUUID).child('/winner').update({winner: 'player2'});}
@@ -126,6 +125,4 @@ function grabSecondBoard(){
     });
   }
 }
-
-
 
