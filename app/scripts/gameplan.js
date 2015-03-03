@@ -1,3 +1,10 @@
+/////////////////////////////////////////////////////////
+//                                                     //
+//  THIS IS THE PLAN FOR THE REMAINING GAME FUNCTIONS  //
+//                                                     //
+/////////////////////////////////////////////////////////
+
+
 function displayShips() {
   // 1. Input argument will be info from "findShips" function
   // 2. Using classes and/or ids (that match array index), append images or shapes
