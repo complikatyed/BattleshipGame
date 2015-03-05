@@ -1,21 +1,21 @@
 {
-  "name": "tictactoe",
+  "name": "BattleshipGame",
   "version": "1.0.0",
-  "description": "",
+  "description": "2 person Battleship game using Firebase",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/AndyMeagher/BattleshipApp"
+    "url": "https://github.com/complikatyed/BattleshipGame"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/AndyMeagher/BattleshipApp"
+    "url": "https://github.com/complikatyed/BattleshipGame"
   },
-  "homepage": "https://github.com/AndyMeagher/BattleshipApp",
+  "homepage": "https://github.com/complikatyed/BattleshipGame",
   "dependencies": {
   },
   "devDependencies": {
